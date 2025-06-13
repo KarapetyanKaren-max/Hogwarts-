@@ -1,6 +1,7 @@
 package ru.hogwarts.school.model;
 
 import jakarta.persistence.*;
+import org.springframework.http.HttpStatusCode;
 
 @Entity
 public class Student {
@@ -16,18 +17,6 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
-
-
-    public Student(String name, String email, int age) {
-        this.name = name;
-        this.email = email;
-        this.age = age;
-    }
-
-
-    public Student() {
-    }
-
 
     public Long getId() {
         return id;
@@ -67,5 +56,10 @@ public class Student {
 
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
+    }
+
+
+    public HttpStatusCode getFirstName() {
+        return null;
     }
 }
