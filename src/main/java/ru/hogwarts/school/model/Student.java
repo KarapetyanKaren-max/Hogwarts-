@@ -1,28 +1,33 @@
 package ru.hogwarts.school.model;
 
+import jakarta.persistence.*;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 @Entity
 public class Student {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String email;
     private int age;
 
-    public Student(String name, Long id, String email) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
+
+
+    public Student(String name, String email, int age) {
         this.name = name;
-        this.id = id;
         this.email = email;
+        this.age = age;
     }
+
 
     public Student() {
     }
+
 
     public Long getId() {
         return id;
@@ -48,11 +53,19 @@ public class Student {
         this.email = email;
     }
 
+    public int getAge() {
+        return age;
+    }
+
     public void setAge(int age) {
         this.age = age;
     }
 
-    public int getAge() {
-        return age;
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 }

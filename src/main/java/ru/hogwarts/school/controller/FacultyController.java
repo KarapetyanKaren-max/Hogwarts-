@@ -4,13 +4,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("faculty")
+@RequestMapping("/faculty")
 public class FacultyController {
 
     private final FacultyService facultyService;
@@ -19,13 +20,22 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    /**
-     * Эндпоинт для фильтрации факультетов по цвету
-     * URL: /faculties/by-color?color=red
-     */
+    @GetMapping("/{id}/students")
+    public ResponseEntity<List<Student>> getStudentsOfFaculty(@PathVariable Long id) {
+        List<Student> students = facultyService.getStudentsByFacultyId(id);
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/search-by-keyword")
+    public ResponseEntity<List<Faculty>> searchFacultiesByKeyword(@RequestParam String keyword) {
+        List<Faculty> result = facultyService.searchByKeyword(keyword);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/faculties/by-color")
-    public List<Faculty> getFacultiesByColor(@RequestParam String color) {
-        return facultyService.findByColor(color);
+    public ResponseEntity<List<Faculty>> getFacultiesByColor(@RequestParam String color) {
+        List<Faculty> result = facultyService.findByColor(color);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping
