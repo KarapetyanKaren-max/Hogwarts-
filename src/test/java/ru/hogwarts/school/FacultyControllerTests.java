@@ -47,6 +47,7 @@ public class FacultyControllerTests {
 
         when(facultyService.getStudentsByFacultyId(anyLong())).thenReturn(students);
 
+
         ParameterizedTypeReference<List<Student>> typeRef = new ParameterizedTypeReference<>() {};
         ResponseEntity<List<Student>> response = restTemplate.exchange("/faculty/{id}/students", HttpMethod.GET, null, typeRef, facultyId);
 

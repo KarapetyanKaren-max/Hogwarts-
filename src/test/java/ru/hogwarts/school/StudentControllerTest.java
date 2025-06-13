@@ -52,6 +52,7 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$.name").value(faculty.getName()));
     }
 
+
     @Test
     void testGetStudentsByAgeRange() throws Exception {
         Student student1 = new Student();

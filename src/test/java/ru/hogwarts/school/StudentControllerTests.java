@@ -49,6 +49,7 @@ public class StudentControllerTests {
         faculty.setId(1L);
         faculty.setName("Магия");
 
+
         when(studentService.getFacultyByStudentId(studentId)).thenReturn(Optional.of(faculty));
 
         ResponseEntity<Faculty> response = restTemplate.getForEntity("/student/{id}/faculty", Faculty.class, studentId);

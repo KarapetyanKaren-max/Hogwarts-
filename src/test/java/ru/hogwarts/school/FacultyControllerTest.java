@@ -1,5 +1,6 @@
 package ru.hogwarts.school;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ public class FacultyControllerTest {
 
     @BeforeEach
     void setUp() {}
+
 
     @Test
     void testGetStudentsOfFaculty() throws Exception {
