@@ -1,26 +1,34 @@
 package ru.hogwarts.school.model;
 
+import jakarta.persistence.*;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Faculty {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String color;
     private String name;
+
+
+    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Student> students = new ArrayList<>();
+
 
     public Faculty() {
     }
 
-    public Faculty(String color, Long id, String name) {
+
+    public Faculty(String color, String name) {
         this.color = color;
-        this.id = id;
         this.name = name;
     }
+
 
     public Long getId() {
         return id;
@@ -36,5 +44,23 @@ public class Faculty {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }

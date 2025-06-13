@@ -3,6 +3,7 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("student")
+@RequestMapping("/student")
 public class StudentController {
 
     private final StudentService studentService;
@@ -19,13 +20,16 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    /**
-     * Эндпоинт для фильтрации студентов по возрасту
-     * URL: /students/by-age?age=20
-     */
-    @GetMapping("/students/by-age")
-    public List<Student> getStudentsByAge(@RequestParam int age) {
-        return studentService.findByAge(age);
+    @GetMapping("/{id}/faculty")
+    public ResponseEntity<Faculty> getFacultyOfStudent(@PathVariable Long id) {
+        Optional<Faculty> facultyOpt = studentService.getFacultyByStudentId(id);
+        return facultyOpt.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/between-ages")
+    public List<Student> getStudentsByAgeRange(@RequestParam int min, @RequestParam int max) {
+        return studentService.findByAgeBetween(min, max);
     }
 
     @PostMapping
