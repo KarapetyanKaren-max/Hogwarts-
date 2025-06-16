@@ -1,5 +1,7 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
@@ -23,13 +25,18 @@ public class AvatarController {
     private final AvatarService avatarService;
 
     public AvatarController(AvatarService avatarService) {
+
         this.avatarService = avatarService;
     }
 
+    @GetMapping("/paginated")
+    public Page<Avatar> getAvatarsPaginated(Pageable pageable) {
+        return avatarService.getAvatarsPaginated(pageable);
+    }
     @PostMapping("/upload")
     public ResponseEntity<String> uploadAvatar(@RequestPart("file") MultipartFile file) throws IOException {
         String uniqueFilename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path directory = Paths.get("uploads"); // Директория для хранения картинок на диске
+        Path directory = Paths.get("uploads");
         Path destination = directory.resolve(uniqueFilename);
 
         Files.copy(file.getInputStream(), destination);

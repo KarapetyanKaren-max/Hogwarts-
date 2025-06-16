@@ -20,16 +20,22 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @GetMapping("/{id}/faculty")
-    public ResponseEntity<Faculty> getFacultyOfStudent(@PathVariable Long id) {
-        Optional<Faculty> facultyOpt = studentService.getFacultyByStudentId(id);
-        return facultyOpt.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/count-all-students")
+    public ResponseEntity<Long> getTotalNumberOfStudents() {
+        long totalCount = studentService.getTotalNumberOfStudents();
+        return new ResponseEntity<>(totalCount, HttpStatus.OK);
     }
 
-    @GetMapping("/between-ages")
-    public List<Student> getStudentsByAgeRange(@RequestParam int min, @RequestParam int max) {
-        return studentService.findByAgeBetween(min, max);
+    @GetMapping("/average-age")
+    public ResponseEntity<Double> getAverageStudentAge() {
+        double avgAge = studentService.getAverageStudentAge();
+        return new ResponseEntity<>(avgAge, HttpStatus.OK);
+    }
+
+    @GetMapping("/last-five-students")
+    public ResponseEntity<List<Student>> getLastFiveStudents() {
+        List<Student> lastFiveStudents = studentService.getLastFiveStudents();
+        return new ResponseEntity<>(lastFiveStudents, HttpStatus.OK);
     }
 
     @PostMapping
@@ -38,11 +44,6 @@ public class StudentController {
         return new ResponseEntity<>(createdStudent, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> students = studentService.findAll();
-        return ResponseEntity.ok(students);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {

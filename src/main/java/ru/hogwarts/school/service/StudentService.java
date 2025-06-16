@@ -13,33 +13,22 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    private static final Logger log = LoggerFactory.getLogger(StudentService.class);
-
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public Optional<Faculty> getFacultyByStudentId(Long id) {
-        Optional<Student> studentOptional = studentRepository.findById(id);
-        return studentOptional.map(Student::getFaculty);
+    public long getTotalNumberOfStudents() {
+        return studentRepository.countAllStudents();
     }
 
-    public List<Student> findByAge(int age) {
-        return studentRepository.findAllByAge(age);
+    public double getAverageStudentAge() {
+        return studentRepository.averageStudentAge();
     }
 
-    public List<Student> findByAgeBetween(int min, int max) {
-        return studentRepository.findByAgeBetween(min, max);
-    }
-
-    public Student save(Student student) {
-        return studentRepository.save(student);
-    }
-
-    public List<Student> findAll() {
-        return studentRepository.findAll();
+    public List<Student> getLastFiveStudents() {
+        return studentRepository.findLastFiveStudents();
     }
 
     public Optional<Student> findById(Long id) {
@@ -64,5 +53,24 @@ public class StudentService {
             return true;
         }
         return false;
+    }
+
+    public Student save(Student student) {
+
+        return student;
+    }
+
+    public Object getFacultyByStudentId(long studentId) {
+
+        return null;
+    }
+
+    public Object findByAgeBetween(int i, int i1) {
+        return null;
+    }
+
+    public Object findAll() {
+
+        return null;
     }
 }
