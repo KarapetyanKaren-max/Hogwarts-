@@ -20,10 +20,10 @@ public class AvatarService {
     }
 
     public void saveAvatar(Avatar avatar) {
-
+        avatarRepository.save(avatar);
     }
 
     public Avatar getAvatarById(Long id) {
-        return null;
+        return avatarRepository.findById(id).orElse(null);
     }
 }

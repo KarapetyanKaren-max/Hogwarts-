@@ -59,7 +59,4 @@ public class Student {
     }
 
 
-    public HttpStatusCode getFirstName() {
-        return null;
     }
-}

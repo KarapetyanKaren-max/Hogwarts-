@@ -9,12 +9,12 @@ import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    @Query(value = "SELECT COUNT(*) FROM students", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM student", nativeQuery = true)
     long countAllStudents();
 
-    @Query(value = "SELECT AVG(age) FROM students", nativeQuery = true)
+    @Query(value = "SELECT AVG(age) FROM student", nativeQuery = true)
     Double averageStudentAge();
 
-    @Query(value = "SELECT * FROM students ORDER BY id DESC LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT * FROM student ORDER BY id DESC LIMIT 5", nativeQuery = true)
     List<Student> findLastFiveStudents();
 }
