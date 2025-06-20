@@ -3,7 +3,6 @@ package ru.hogwarts.school.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -13,46 +12,57 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public long getTotalNumberOfStudents() {
-        return studentRepository.countAllStudents();
+    public List<Student> getAllStudents() {
+        logger.info("Метод getAllStudents вызван.");
+        return studentRepository.findAll();
     }
 
-    public double getAverageStudentAge() {
-        return studentRepository.averageStudentAge();
-    }
-
-    public List<Student> getLastFiveStudents() {
-        return studentRepository.findLastFiveStudents();
-    }
-
-    public Optional<Student> findById(Long id) {
+    public Optional<Student> getStudentById(Long id) {
+        logger.info("Метод getStudentById вызван с аргументом {}", id);
         return studentRepository.findById(id);
     }
 
-    public Optional<Student> update(Long id, Student newData) {
-        Optional<Student> existingOpt = studentRepository.findById(id);
-        if (existingOpt.isPresent()) {
-            Student existing = existingOpt.get();
-            existing.setName(newData.getName());
-            existing.setEmail(newData.getEmail());
-            studentRepository.save(existing);
-            return Optional.of(existing);
-        }
-        return Optional.empty();
+    public Student createStudent(Student student) {
+        logger.info("Метод createStudent вызван с аргументами {}", student);
+        return studentRepository.save(student);
     }
 
-    public boolean deleteById(Long id) {
-        if (studentRepository.existsById(id)) {
-            studentRepository.deleteById(id);
-            return true;
+    public Student updateStudent(Long id, Student updatedStudent) {
+        logger.info("Метод updateStudent вызван с аргументами {}, {}", id, updatedStudent);
+        Optional<Student> existingStudent = studentRepository.findById(id);
+        if (existingStudent.isPresent()) {
+            Student student = existingStudent.get();
+            student.setName(updatedStudent.getName());
+            student.setAge(updatedStudent.getAge());
+            return studentRepository.save(student);
         }
-        return false;
+        throw new RuntimeException("Студент не найден");
+    }
+
+    public void deleteStudent(Long id) {
+        logger.info("Метод deleteStudent вызван с аргументом {}", id);
+        studentRepository.deleteById(id);
+    }
+
+    public long getTotalNumberOfStudents() {
+
+        return 0;
+    }
+
+    public double getAverageStudentAge() {
+        return 0;
+    }
+
+    public List<Student> getLastFiveStudents() {
+        return null;
     }
 
     public Student save(Student student) {
@@ -60,17 +70,15 @@ public class StudentService {
         return student;
     }
 
-    public Object getFacultyByStudentId(long studentId) {
-
+    public Optional<Student> findById(Long id) {
         return null;
     }
 
-    public Object findByAgeBetween(int i, int i1) {
+    public Optional<Student> update(Long id, Student student) {
         return null;
     }
 
-    public Object findAll() {
-
-        return null;
+    public boolean deleteById(Long id) {
+        return false;
     }
 }
