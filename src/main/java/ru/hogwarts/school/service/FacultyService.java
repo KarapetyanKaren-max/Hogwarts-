@@ -6,6 +6,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +54,15 @@ public class FacultyService {
         return Optional.empty();
     }
 
+    public Optional<String> getLongestFacultyName() {
+        List<Faculty> faculties = facultyRepository.findAll();
+        if (faculties.isEmpty()) {
+            return Optional.empty();
+        }
+        return faculties.stream()
+                .max(Comparator.comparingInt(f -> f.getName().length())) // Сортируем по длине названия
+                .map(Faculty::getName);
+    }
     public boolean deleteById(Long id) {
         if (facultyRepository.existsById(id)) {
             facultyRepository.deleteById(id);
@@ -60,4 +70,5 @@ public class FacultyService {
         }
         return false;
     }
+
 }

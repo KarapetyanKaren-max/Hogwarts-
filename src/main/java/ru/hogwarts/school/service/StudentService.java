@@ -78,6 +78,17 @@ public class StudentService {
         logger.debug("Был вызван метод getLastFiveStudents");
         return studentRepository.findTop5ByOrderByIdDesc();
     }
+    public Double calculateAverageAge() {
+        logger.debug("Вычисляется средний возраст студентов.");
+        List<Student> allStudents = studentRepository.findAll();
+        if (allStudents.isEmpty()) { // Проверка на наличие студентов
+            return 0.0;
+        }
+        double sumOfAges = allStudents.stream()
+                .mapToInt(Student::getAge)
+                .sum();
+        return sumOfAges / allStudents.size();
+    }
 
     public boolean deleteById(Long id) {
         return false;
@@ -92,6 +103,10 @@ public class StudentService {
     }
 
     public Optional<Student> update(Long id, Student student) {
+        return null;
+    }
+
+    public List<String> getStudentsNamesStartingWithA() {
         return null;
     }
 }

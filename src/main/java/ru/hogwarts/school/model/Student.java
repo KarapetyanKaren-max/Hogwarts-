@@ -1,7 +1,6 @@
 package ru.hogwarts.school.model;
 
 import jakarta.persistence.*;
-import org.springframework.http.HttpStatusCode;
 
 @Entity
 public class Student {
@@ -57,6 +56,4 @@ public class Student {
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
     }
-
-
-    }
+}

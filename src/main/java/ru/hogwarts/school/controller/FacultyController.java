@@ -64,6 +64,13 @@ public class FacultyController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/longest-name")
+    public ResponseEntity<String> getLongestFacultyName() {
+        Optional<String> longestName = facultyService.getLongestFacultyName();
+        return longestName.map(name -> new ResponseEntity<>(name, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFaculty(@PathVariable Long id) {
         boolean deleted = facultyService.deleteById(id);

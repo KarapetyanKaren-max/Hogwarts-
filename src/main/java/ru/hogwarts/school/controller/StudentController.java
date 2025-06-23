@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,12 @@ public class StudentController {
         return new ResponseEntity<>(avgAge, HttpStatus.OK);
     }
 
+    @GetMapping("/average-age")
+    public ResponseEntity<Double> getAverageAge() {
+        double averageAge = studentService.calculateAverageAge();
+        return new ResponseEntity<>(averageAge, HttpStatus.OK);
+    }
+
     @GetMapping("/last-five-students")
     public ResponseEntity<List<Student>> getLastFiveStudents() {
         List<Student> lastFiveStudents = studentService.getLastFiveStudents();
@@ -44,7 +51,6 @@ public class StudentController {
         Student createdStudent = studentService.save(student);
         return new ResponseEntity<>(createdStudent, HttpStatus.CREATED);
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
@@ -68,5 +74,16 @@ public class StudentController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/names-starting-with-A")
+    public ResponseEntity<List<String>> getStudentsNamesStartingWithA() {
+        List<String> names = studentService.getStudentsNamesStartingWithA();
+        return new ResponseEntity<>(names, HttpStatus.OK);
+    }
+    @GetMapping("/efficient-sum")
+    public ResponseEntity<Integer> efficientSumEndpoint() {
+        int sum = (1_000_000 * (1_000_000 + 1)) / 2;
+        return new ResponseEntity<>(sum, HttpStatus.OK);
     }
 }
