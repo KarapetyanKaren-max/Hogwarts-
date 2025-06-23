@@ -20,23 +20,27 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
+
     public List<Student> getAllStudents() {
-        logger.info("Метод getAllStudents вызван.");
+        logger.debug("Был вызван метод getAllStudents");
         return studentRepository.findAll();
     }
 
+
     public Optional<Student> getStudentById(Long id) {
-        logger.info("Метод getStudentById вызван с аргументом {}", id);
+        logger.info("Был вызван метод getStudentById с аргументом {}", id);
         return studentRepository.findById(id);
     }
 
+
     public Student createStudent(Student student) {
-        logger.info("Метод createStudent вызван с аргументами {}", student);
+        logger.info("Был вызван метод createStudent с аргументами {}", student);
         return studentRepository.save(student);
     }
 
+
     public Student updateStudent(Long id, Student updatedStudent) {
-        logger.info("Метод updateStudent вызван с аргументами {}, {}", id, updatedStudent);
+        logger.info("Был вызван метод updateStudent с аргументами {}, {}", id, updatedStudent);
         Optional<Student> existingStudent = studentRepository.findById(id);
         if (existingStudent.isPresent()) {
             Student student = existingStudent.get();
@@ -44,30 +48,43 @@ public class StudentService {
             student.setAge(updatedStudent.getAge());
             return studentRepository.save(student);
         }
-        throw new RuntimeException("Студент не найден");
+        logger.warn("Студент с id {} не найден.", id);
+        throw new IllegalArgumentException("Студент не найден");
     }
 
+
     public void deleteStudent(Long id) {
-        logger.info("Метод deleteStudent вызван с аргументом {}", id);
+        logger.info("Был вызван метод deleteStudent с аргументом {}", id);
         studentRepository.deleteById(id);
     }
 
-    public long getTotalNumberOfStudents() {
 
-        return 0;
+    public long getTotalNumberOfStudents() {
+        logger.debug("Был вызван метод getTotalNumberOfStudents");
+        return studentRepository.count();
     }
 
     public double getAverageStudentAge() {
-        return 0;
+        logger.debug("Был вызван метод getAverageStudentAge");
+        List<Student> students = studentRepository.findAll();
+        if (!students.isEmpty()) {
+            double sum = students.stream().mapToDouble(Student::getAge).sum();
+            return sum / students.size();
+        }
+        return 0.0;
     }
 
     public List<Student> getLastFiveStudents() {
-        return null;
+        logger.debug("Был вызван метод getLastFiveStudents");
+        return studentRepository.findTop5ByOrderByIdDesc();
+    }
+
+    public boolean deleteById(Long id) {
+        return false;
     }
 
     public Student save(Student student) {
-
-        return student;
+        return null;
     }
 
     public Optional<Student> findById(Long id) {
@@ -76,9 +93,5 @@ public class StudentService {
 
     public Optional<Student> update(Long id, Student student) {
         return null;
-    }
-
-    public boolean deleteById(Long id) {
-        return false;
     }
 }
