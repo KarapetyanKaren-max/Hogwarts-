@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: initial-table-create
+      author: your_name_here
+      changes:
+        - createTable:
+            tableName: students
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: age
+                  type: SMALLINT
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            constraintName: unique_full_name
+            columnNames: first_name, last_name
+            tableName: students
+  - changeSet:
+      id: add-index-for-first-name
+      author: your_name_here
+      changes:
+        - createIndex:
+            indexName: idx_students_first_name
+            tableName: students
+            columns:
+              - columnName: first_name
+  - changeSet:
+      id: add-compound-index-for-faculty
+      author: your_name_here
+      changes:
+        - createIndex:
+            indexName: idx_faculties_name_color
+            tableName: faculties
+            columns:
+              - columnName: name
+              - columnName: color
