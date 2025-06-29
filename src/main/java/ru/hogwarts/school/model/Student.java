@@ -1,7 +1,6 @@
 package ru.hogwarts.school.model;
 
 import jakarta.persistence.*;
-import org.springframework.http.HttpStatusCode;
 
 @Entity
 public class Student {
@@ -14,9 +13,11 @@ public class Student {
     private String email;
     private int age;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "faculty_id")
-    private Faculty faculty;
+    @JoinColumn(name = "faculty_id") // foreign key столбец в таблице students
+    private Faculty faculty; // Сущность факультета
+
 
     public Long getId() {
         return id;
@@ -50,6 +51,7 @@ public class Student {
         this.age = age;
     }
 
+
     public Faculty getFaculty() {
         return faculty;
     }
@@ -57,6 +59,4 @@ public class Student {
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
     }
-
-
-    }
+}
