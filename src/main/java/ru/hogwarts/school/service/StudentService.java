@@ -109,4 +109,8 @@ public class StudentService {
     public List<String> getStudentsNamesStartingWithA() {
         return null;
     }
+
+    public List<Student> findAll() {
+        return null;
+    }
 }

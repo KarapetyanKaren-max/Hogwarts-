@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/student")
@@ -81,9 +82,63 @@ public class StudentController {
         List<String> names = studentService.getStudentsNamesStartingWithA();
         return new ResponseEntity<>(names, HttpStatus.OK);
     }
+
     @GetMapping("/efficient-sum")
     public ResponseEntity<Integer> efficientSumEndpoint() {
         int sum = (1_000_000 * (1_000_000 + 1)) / 2;
         return new ResponseEntity<>(sum, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/students/print-parallel")
+    public void printParallelStudents() {
+        List<Student> students = studentService.findAll();
+
+        if (students.size() >= 6) {
+            System.out.println("Main Thread: " + students.get(0).getName());
+            System.out.println("Main Thread: " + students.get(1).getName());
+
+            CompletableFuture.runAsync(() -> {
+                System.out.println("Thread #1: " + students.get(2).getName());
+                System.out.println("Thread #1: " + students.get(3).getName());
+            });
+
+            CompletableFuture.runAsync(() -> {
+                System.out.println("Thread #2: " + students.get(4).getName());
+                System.out.println("Thread #2: " + students.get(5).getName());
+            });
+        } else {
+            throw new IllegalStateException("Not enough students to perform parallel printing");
+        }
+    }
+
+
+    private synchronized void synchronizedPrint(String message) {
+        System.out.println(message);
+    }
+
+
+    @GetMapping("/students/print-synchronized")
+    public void printSynchronizedStudents() {
+        List<Student> students = studentService.findAll();
+
+        if (students.size() >= 6) {
+
+            synchronizedPrint("Main Thread: " + students.get(0).getName());
+            synchronizedPrint("Main Thread: " + students.get(1).getName());
+
+
+            CompletableFuture.runAsync(() -> {
+                synchronizedPrint("Thread #1: " + students.get(2).getName());
+                synchronizedPrint("Thread #1: " + students.get(3).getName());
+            });
+
+            CompletableFuture.runAsync(() -> {
+                synchronizedPrint("Thread #2: " + students.get(4).getName());
+                synchronizedPrint("Thread #2: " + students.get(5).getName());
+            });
+        } else {
+            throw new IllegalStateException("Not enough students to perform synchronized printing");
+        }
     }
 }
