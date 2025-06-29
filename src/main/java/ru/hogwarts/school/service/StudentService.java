@@ -60,7 +60,6 @@ public class StudentService {
         return false;
     }
 
-
     public long getTotalNumberOfStudents() {
         logger.debug("Был вызван метод getTotalNumberOfStudents");
         return studentRepository.count();
@@ -95,39 +94,9 @@ public class StudentService {
 
     public List<String> getStudentsNamesStartingWithA() {
         logger.debug("Запрашивается список студентов с именем, начинающимся на A");
-        return studentRepository.findAllByNameStartingWith("A").stream()
+        return studentRepository.findAllByNameStartingWith("A")
+                .stream()
                 .map(Student::getName)
                 .collect(Collectors.toList());
-    }
-
-    public List<Student> findAll() {
-        return studentRepository.findAll();
-    }
-
-    public Optional<Student> findById(Long id) {
-        return studentRepository.findById(id);
-    }
-
-    public Student save(Student student) {
-        return studentRepository.save(student);
-    }
-
-    public boolean deleteById(Long id) {
-        if (studentRepository.existsById(id)) {
-            studentRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
-    public Optional<Student> update(Long id, Student updatedStudent) {
-        Optional<Student> existingStudentOptional = studentRepository.findById(id);
-        if (existingStudentOptional.isPresent()) {
-            Student existingStudent = existingStudentOptional.get();
-            existingStudent.setName(updatedStudent.getName());
-            existingStudent.setAge(updatedStudent.getAge());
-            return Optional.of(studentRepository.save(existingStudent));
-        }
-        return Optional.empty();
     }
 }
