@@ -1,9 +1,8 @@
 package ru.hogwarts.school.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 
 import java.util.List;
@@ -20,4 +19,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findLastFiveStudents();
 
     List<Student> findTop5ByOrderByIdDesc();
+
+
+    @Query(value = "SELECT * FROM student WHERE name LIKE CONCAT(:prefix, '%')", nativeQuery = true)
+    List<Student> findAllByNameStartingWith(@Param("prefix") String prefix);
 }
