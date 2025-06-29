@@ -3,11 +3,8 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -92,11 +89,15 @@ public class StudentController {
 
     @GetMapping("/students/print-parallel")
     public void printParallelStudents() {
+
         List<Student> students = studentService.findAll();
 
+
         if (students.size() >= 6) {
+
             System.out.println("Main Thread: " + students.get(0).getName());
             System.out.println("Main Thread: " + students.get(1).getName());
+
 
             CompletableFuture.runAsync(() -> {
                 System.out.println("Thread #1: " + students.get(2).getName());
@@ -120,7 +121,9 @@ public class StudentController {
 
     @GetMapping("/students/print-synchronized")
     public void printSynchronizedStudents() {
+
         List<Student> students = studentService.findAll();
+
 
         if (students.size() >= 6) {
 
@@ -132,6 +135,7 @@ public class StudentController {
                 synchronizedPrint("Thread #1: " + students.get(2).getName());
                 synchronizedPrint("Thread #1: " + students.get(3).getName());
             });
+
 
             CompletableFuture.runAsync(() -> {
                 synchronizedPrint("Thread #2: " + students.get(4).getName());

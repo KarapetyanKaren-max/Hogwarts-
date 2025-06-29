@@ -86,7 +86,7 @@ public class StudentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newStudent)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(jsonPath("$.name").value(newStudent.getName()));
+                .andExpect(jsonPath("$.name").value(newStudent.getName(t)));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class StudentControllerTest {
         mvc.perform(MockMvcRequestBuilders.get("/student/{id}", studentId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.id").value(student.getId()))
-                .andExpect(jsonPath("$.name").value(student.getName()));
+                .andExpect(jsonPath("$.name").value(student.getName(t)));
     }
 
     @Test
@@ -141,7 +141,7 @@ public class StudentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedStudent)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.name").value(updatedStudent.getName()));
+                .andExpect(jsonPath("$.name").value(updatedStudent.getName(t)));
     }
 
     @Test
