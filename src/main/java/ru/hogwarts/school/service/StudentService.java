@@ -9,6 +9,9 @@ import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,28 +21,34 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
 
+    private final Object outputLock = new Object();
+
     @Autowired
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
+
     public List<Student> getAllStudents() {
-        logger.debug("Был вызван метод getAllStudents");
+        logger.debug("Получаем всех студентов");
         return studentRepository.findAll();
     }
 
+
     public Optional<Student> getStudentById(Long id) {
-        logger.info("Был вызван метод getStudentById с аргументом {}", id);
+        logger.info("Ищем студента с ID {}", id);
         return studentRepository.findById(id);
     }
 
+
     public Student createStudent(Student student) {
-        logger.info("Был вызван метод createStudent с аргументами {}", student);
+        logger.info("Создаём студента {}", student);
         return studentRepository.save(student);
     }
 
+
     public Optional<Student> updateStudent(Long id, Student updatedStudent) {
-        logger.info("Был вызван метод updateStudent с аргументами {}, {}", id, updatedStudent);
+        logger.info("Обновляем студента с ID {}", id);
         Optional<Student> existingStudentOptional = studentRepository.findById(id);
         if (existingStudentOptional.isPresent()) {
             Student existingStudent = existingStudentOptional.get();
@@ -47,12 +56,13 @@ public class StudentService {
             existingStudent.setAge(updatedStudent.getAge());
             return Optional.of(studentRepository.save(existingStudent));
         }
-        logger.warn("Студент с id {} не найден.", id);
+        logger.warn("Студент с ID {} не найден", id);
         return Optional.empty();
     }
 
+
     public boolean deleteStudent(Long id) {
-        logger.info("Был вызван метод deleteStudent с аргументом {}", id);
+        logger.info("Удаляем студента с ID {}", id);
         if (studentRepository.existsById(id)) {
             studentRepository.deleteById(id);
             return true;
@@ -60,13 +70,91 @@ public class StudentService {
         return false;
     }
 
+    private void syncPrint(String message) {
+        synchronized (outputLock) {
+            System.out.println(message);
+        }
+    }
+
+
+    public void printStudentsInParallel(List<Student> students) {
+        if (students.size() >= 6) {
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            try {
+
+                System.out.println(students.get(0).getName());
+                System.out.println(students.get(1).getName());
+
+
+                executor.submit(() -> {
+                    System.out.println(students.get(2).getName());
+                    System.out.println(students.get(3).getName());
+                });
+
+
+                executor.submit(() -> {
+                    System.out.println(students.get(4).getName());
+                    System.out.println(students.get(5).getName());
+                });
+
+
+                executor.shutdown();
+                executor.awaitTermination(1L, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                if (!executor.isTerminated()) {
+                    executor.shutdownNow();
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Минимально допустимое количество студентов — 6.");
+        }
+    }
+
+
+    public void printStudentsSynchronized(List<Student> students) {
+        if (students.size() >= 6) {
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            try {
+
+                syncPrint(students.get(0).getName());
+                syncPrint(students.get(1).getName());
+
+
+                executor.submit(() -> {
+                    syncPrint(students.get(2).getName());
+                    syncPrint(students.get(3).getName());
+                });
+
+
+                executor.submit(() -> {
+                    syncPrint(students.get(4).getName());
+                    syncPrint(students.get(5).getName());
+                });
+
+
+                executor.shutdown();
+                executor.awaitTermination(1L, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                if (!executor.isTerminated()) {
+                    executor.shutdownNow();
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Минимально допустимое количество студентов — 6.");
+        }
+    }
+
     public long getTotalNumberOfStudents() {
-        logger.debug("Был вызван метод getTotalNumberOfStudents");
+        logger.debug("Подсчитываем общее число студентов");
         return studentRepository.count();
     }
 
     public double getAverageStudentAge() {
-        logger.debug("Был вызван метод getAverageStudentAge");
+        logger.debug("Рассчитываем средний возраст студентов");
         List<Student> students = studentRepository.findAll();
         if (!students.isEmpty()) {
             double sum = students.stream().mapToDouble(Student::getAge).sum();
@@ -76,12 +164,12 @@ public class StudentService {
     }
 
     public List<Student> getLastFiveStudents() {
-        logger.debug("Был вызван метод getLastFiveStudents");
+        logger.debug("Получаем последних 5 студентов");
         return studentRepository.findTop5ByOrderByIdDesc();
     }
 
     public Double calculateAverageAge() {
-        logger.debug("Вычисляется средний возраст студентов.");
+        logger.debug("Расчёт средней оценки");
         List<Student> allStudents = studentRepository.findAll();
         if (allStudents.isEmpty()) {
             return 0.0;
@@ -92,28 +180,11 @@ public class StudentService {
         return sumOfAges / allStudents.size();
     }
 
-
     public List<String> getStudentsNamesStartingWithA() {
-        logger.debug("Запрашивается список студентов с именем, начинающимся на A");
-        return studentRepository.findAllByNameStartingWith("A").stream()
+        logger.debug("Получаем список студентов с именами, начинающимися на букву \"A\"");
+        return studentRepository.findAllByNameStartingWith("A")
+                .stream()
                 .map(Student::getName)
                 .collect(Collectors.toList());
-    }
-
-
-    public List<Student> findAll() {
-        return null;
-    }
-
-    public Optional<Student> findById(Long id) {
-        return Optional.empty();
-    }
-
-    public Optional<Student> update(Long id, Student student) {
-        return Optional.empty();
-    }
-
-    public Student save(Student student) {
-        return null;
     }
 }

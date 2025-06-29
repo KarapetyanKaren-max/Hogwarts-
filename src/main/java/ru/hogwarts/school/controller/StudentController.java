@@ -2,13 +2,19 @@ package ru.hogwarts.school.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/student")
@@ -32,12 +38,6 @@ public class StudentController {
         return new ResponseEntity<>(avgAge, HttpStatus.OK);
     }
 
-    @GetMapping("/average-age")
-    public ResponseEntity<Double> getAverageAge() {
-        double averageAge = studentService.calculateAverageAge();
-        return new ResponseEntity<>(averageAge, HttpStatus.OK);
-    }
-
     @GetMapping("/last-five-students")
     public ResponseEntity<List<Student>> getLastFiveStudents() {
         List<Student> lastFiveStudents = studentService.getLastFiveStudents();
@@ -46,20 +46,20 @@ public class StudentController {
 
     @PostMapping
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-        Student createdStudent = studentService.save(student);
+        Student createdStudent = studentService.createStudent(student);
         return new ResponseEntity<>(createdStudent, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        Optional<Student> studentOpt = studentService.findById(id);
+        Optional<Student> studentOpt = studentService.getStudentById(id);
         return studentOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
-        Optional<Student> updatedStudentOpt = studentService.update(id, student);
+        Optional<Student> updatedStudentOpt = studentService.updateStudent(id, student);
         return updatedStudentOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -89,60 +89,13 @@ public class StudentController {
 
     @GetMapping("/students/print-parallel")
     public void printParallelStudents() {
-
-        List<Student> students = studentService.findAll();
-
-
-        if (students.size() >= 6) {
-
-            System.out.println("Main Thread: " + students.get(0).getName());
-            System.out.println("Main Thread: " + students.get(1).getName());
-
-
-            CompletableFuture.runAsync(() -> {
-                System.out.println("Thread #1: " + students.get(2).getName());
-                System.out.println("Thread #1: " + students.get(3).getName());
-            });
-
-            CompletableFuture.runAsync(() -> {
-                System.out.println("Thread #2: " + students.get(4).getName());
-                System.out.println("Thread #2: " + students.get(5).getName());
-            });
-        } else {
-            throw new IllegalStateException("Not enough students to perform parallel printing");
-        }
+        List<Student> students = studentService.getAllStudents();
+        studentService.printStudentsInParallel(students);
     }
-
-
-    private synchronized void synchronizedPrint(String message) {
-        System.out.println(message);
-    }
-
 
     @GetMapping("/students/print-synchronized")
     public void printSynchronizedStudents() {
-
-        List<Student> students = studentService.findAll();
-
-
-        if (students.size() >= 6) {
-
-            synchronizedPrint("Main Thread: " + students.get(0).getName());
-            synchronizedPrint("Main Thread: " + students.get(1).getName());
-
-
-            CompletableFuture.runAsync(() -> {
-                synchronizedPrint("Thread #1: " + students.get(2).getName());
-                synchronizedPrint("Thread #1: " + students.get(3).getName());
-            });
-
-
-            CompletableFuture.runAsync(() -> {
-                synchronizedPrint("Thread #2: " + students.get(4).getName());
-                synchronizedPrint("Thread #2: " + students.get(5).getName());
-            });
-        } else {
-            throw new IllegalStateException("Not enough students to perform synchronized printing");
-        }
+        List<Student> students = studentService.getAllStudents();
+        studentService.printStudentsSynchronized(students);
     }
-}
+    }
